@@ -1,0 +1,6 @@
+exception_id,invoice_id,supplier_name,exception_type,severity,issue,required_action,owner,due_date,status,notes
+EX-001,INV-002,Quick Repairs,Missing Info,High,VAT number missing,Request VAT number from supplier,Admin,2026-07-10,Open,Supplier record also missing VAT number
+EX-002,INV-004,Metro Cleaning Supplies,Approval Needed,High,New supplier and amount above approval threshold,Owner approval required,Owner,2026-07-11,Open,First invoice from supplier
+EX-003,INV-005,BuildMart Hardware,Possible Duplicate,Medium,Invoice number BM-2201 appears similar to prior invoice,Review against previous month invoice,Admin,2026-07-11,Open,Do not approve until checked
+EX-004,INV-006,ABC Supplies,Due Soon,Medium,Due date within 48 hours,Escalate for approval,Owner,2026-07-10,Open,Payment action not automated
+EX-005,INV-007,Unknown Supplier,Unknown Supplier,High,Supplier not in register,Verify supplier and create record if approved,Admin,2026-07-12,Open,Requires human verification

@@ -1,0 +1,10 @@
+checklist_id,onboarding_id,client_name,required_item,item_type,status,requested_date,received_date,owner,follow_up_due,notes
+DOC-001,ONB-001,Lerato Naidoo,Signed agreement,Agreement,Missing,2026-07-10,,Admin,2026-07-12,Required before work starts
+DOC-002,ONB-001,Lerato Naidoo,ID or business representative details,Identity/Contact,Missing,2026-07-10,,Admin,2026-07-12,Client has not sent details
+DOC-003,ONB-001,Lerato Naidoo,Billing details,Billing,Received,2026-07-10,2026-07-10,Admin,,Received by email
+DOC-004,ONB-002,Thabo Mokoena,Proof of payment,Payment,Received,2026-07-09,2026-07-09,Admin,,Confirmed
+DOC-005,ONB-002,Thabo Mokoena,Invoice source access details,Access,Received,2026-07-09,2026-07-10,Admin,,Ready for kickoff
+DOC-006,ONB-003,Pieter Jacobs,Business details,Business Info,Partial,2026-07-08,,Owner,2026-07-10,Still missing VAT and address details
+DOC-007,ONB-004,Ayesha Khan,Signed agreement,Agreement,Missing,2026-07-07,,Admin,2026-07-10,Reminder due
+DOC-008,ONB-004,Ayesha Khan,Property list spreadsheet,Project Info,Received,2026-07-07,2026-07-08,Admin,,Received
+DOC-009,ONB-005,Chris Botha,Welcome checklist,Internal,Complete,2026-07-06,2026-07-06,Admin,,Completed

@@ -1,0 +1,4 @@
+lead_id,received_date,source,contact_name,company_name,phone,email,service_needed,location,urgency,status,assigned_to,first_response_sent,first_response_time,quote_needed,quote_sent_date,quote_amount,follow_up_due,next_action,outcome,notes
+LEAD-001,2026-07-10,Website Form,Thabo Mokoena,Mokoena Projects,0710000000,thabo@example.com,Gate motor repair,Bloemfontein,High,Needs Response,Owner,No,,Yes,,,2026-07-10,Call and confirm site details,,Demo urgent lead
+LEAD-002,2026-07-10,WhatsApp,Lerato Naidoo,,0720000000,,Office cleaning quote,Johannesburg,Normal,Quote Sent,Admin,Yes,15 min,Yes,2026-07-10,4500.00,2026-07-12,Follow up on quote,,Demo quote follow-up
+LEAD-003,2026-07-09,Referral,Pieter Jacobs,Jacobs Auto,0730000000,pieter@example.com,Panel beating estimate,Pretoria,Normal,Won,Owner,Yes,1 hour,Yes,2026-07-09,8200.00,,Schedule job,Won,Demo won lead
