@@ -21,11 +21,17 @@ jobs:
       - name: Admin HQ and evidence regression
         run: node tests/run-tests.mjs
       - name: Admin Audit browser journey
-        run: node tests/browser-audit.mjs
-      - name: Upload browser proof
+        shell: bash
+        run: |
+          mkdir -p test-results
+          set -o pipefail
+          node tests/browser-audit.mjs 2>&1 | tee test-results/browser-audit.log
+      - name: Upload browser proof and diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: admin-audit-v2-browser-proof
-          path: test-results/admin-audit-v2-mobile.png
-          if-no-files-found: ignore
+          path: |
+            test-results/browser-audit.log
+            test-results/admin-audit-v2-mobile.png
+          if-no-files-found: warn
