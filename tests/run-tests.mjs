@@ -38,6 +38,7 @@ const expectedFails = {
 const routeMap = {
   publicHome: '../index.html',
   adminSystems: '../admin-systems.html',
+  adminAudit: '../admin-audit.html',
   launcher: '../app/index.html',
   invoice: '../app/invoice-admin/index.html',
   sales: '../app/sales-admin/index.html',
@@ -54,13 +55,26 @@ for (const route of Object.values(routeMap)) {
 const publicHome = readFileSync(new URL(routeMap.publicHome, import.meta.url), 'utf8');
 const adminSystems = readFileSync(new URL(routeMap.adminSystems, import.meta.url), 'utf8');
 const launcher = readFileSync(new URL(routeMap.launcher, import.meta.url), 'utf8');
+const adminAuditPage = readFileSync(new URL(routeMap.adminAudit, import.meta.url), 'utf8');
+const adminAuditCode = readFileSync(new URL('../admin-audit.js', import.meta.url), 'utf8');
 
 for (const publicPage of [publicHome, adminSystems, launcher]) {
   assert.equal(publicPage.includes('hello@example.com'), false, 'public pages must not contain placeholder email');
   assert.equal(publicPage.includes('Open demo'), false, 'public pages must not use old demo-first CTA wording');
 }
-assert.ok(publicHome.includes('mailto:buttercoder.dev@gmail.com?subject=Admin%20Audit%20Request'), 'homepage has a real audit contact path');
-assert.ok(adminSystems.includes('mailto:buttercoder.dev@gmail.com?subject=Admin%20Audit%20Request'), 'systems page has a real audit contact path');
+assert.ok(publicHome.includes('href="admin-audit.html"'), 'homepage links to the structured Admin Audit');
+assert.ok(adminSystems.includes('href="admin-audit.html"'), 'systems page links to the structured Admin Audit');
+assert.ok(adminAuditPage.includes('id="admin-audit-form"'), 'Admin Audit contains the structured form');
+assert.ok(adminAuditPage.includes('id="audit-result"'), 'Admin Audit contains the generated result');
+assert.ok(adminAuditPage.includes('does not store or transmit your answers automatically'), 'Admin Audit states its no-storage boundary');
+assert.equal(adminAuditCode.includes('fetch('), false, 'Admin Audit must not transmit data automatically');
+const auditContext = { console, globalThis: {} };
+auditContext.globalThis = auditContext;
+vm.createContext(auditContext);
+vm.runInContext(adminAuditCode, auditContext);
+const auditResult = auditContext.AdminAudit.scoreAudit({ areas: { invoice: 4, sales: 1, client: 2, property: 0, practice: 0, member: 0 }, signals: ['late_invoices', 'approvals_stuck'] });
+assert.equal(auditResult.top[0].key, 'invoice', 'invoice pain and signals rank Invoice Admin first');
+assert.ok(auditResult.overall > 0, 'Admin Audit returns a meaningful score');
 assert.ok(publicHome.includes('Demo only</span><h3>Practice Admin'), 'homepage labels Practice Admin as demo only');
 assert.ok(adminSystems.includes('Demo only</p><h3>Practice Admin Setup'), 'systems page labels Practice Admin as demo only');
 
