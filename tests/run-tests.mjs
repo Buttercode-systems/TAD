@@ -40,6 +40,7 @@ const routeMap = {
   adminSystems: '../admin-systems.html',
   legacyAudit: '../admin-audit.html',
   adminAudit: '../admin-audit-v2.html',
+  operatorEntry: '../ops/index.html',
   launcher: '../app/index.html',
   invoice: '../app/invoice-admin/index.html',
   sales: '../app/sales-admin/index.html',
@@ -58,6 +59,7 @@ const adminSystems = readFileSync(new URL(routeMap.adminSystems, import.meta.url
 const legacyAudit = readFileSync(new URL(routeMap.legacyAudit, import.meta.url), 'utf8');
 const adminAuditPage = readFileSync(new URL(routeMap.adminAudit, import.meta.url), 'utf8');
 const adminAuditCode = readFileSync(new URL('../admin-audit-v2.js', import.meta.url), 'utf8');
+const operatorEntry = readFileSync(new URL(routeMap.operatorEntry, import.meta.url), 'utf8');
 const launcher = readFileSync(new URL(routeMap.launcher, import.meta.url), 'utf8');
 
 for (const publicPage of [publicHome, adminSystems, launcher]) {
@@ -66,6 +68,14 @@ for (const publicPage of [publicHome, adminSystems, launcher]) {
 }
 assert.ok(publicHome.includes('href="admin-audit.html"'), 'homepage links to the stable Admin Audit route');
 assert.ok(adminSystems.includes('href="admin-audit.html"'), 'systems page links to the stable Admin Audit route');
+assert.ok(publicHome.includes('href="ops/"'), 'homepage links operators to the secure service portal entry');
+assert.ok(adminSystems.includes('href="ops/"'), 'systems page links operators to the secure service portal entry');
+assert.ok(operatorEntry.includes('https://due-today-six.vercel.app/ops'), 'TAD operator entry hands off to the shared authenticated console');
+assert.equal(operatorEntry.includes('publishableKey'), false, 'TAD operator handoff contains no browser database configuration');
+assert.ok(publicHome.includes('Managed back-office operations'), 'homepage leads with the managed service model');
+assert.ok(publicHome.includes('TAD runs the workflow. DueToday keeps the actions visible.'), 'homepage explains the TAD and DueToday roles');
+assert.ok(adminSystems.includes('Managed admin service playbooks'), 'systems page presents departments as service playbooks');
+assert.ok(adminSystems.includes('DueToday carries the actions'), 'systems page identifies DueToday as the shared action platform');
 assert.ok(legacyAudit.includes('admin-audit-v2.html'), 'legacy Admin Audit route forwards to v2');
 assert.ok(adminAuditPage.includes('id="admin-audit-form"'), 'Admin Audit v2 contains the structured form');
 assert.ok(adminAuditPage.includes('id="audit-result"'), 'Admin Audit v2 contains the generated result');
@@ -127,8 +137,8 @@ assert.ok(phase3Result.rootCauses.length > 0, 'audit explains root causes');
 assert.ok(phase3Result.primary.measures.length >= 4, 'audit produces success measures');
 assert.ok(A.formatBrief({ business: 'Test', teamSize: '2–5', signals: [] }, phase3Result).includes('14-DAY CONTROLLED PILOT'), 'email brief includes pilot plan');
 
-assert.ok(publicHome.includes('Demo only</span><h3>Practice Admin'), 'homepage labels Practice Admin as demo only');
-assert.ok(adminSystems.includes('Demo only</p><h3>Practice Admin Setup'), 'systems page labels Practice Admin as demo only');
+assert.ok(publicHome.includes('Controlled pilot</span><h3>Practice / Booking Admin'), 'homepage labels Practice / Booking Admin as a controlled pilot');
+assert.ok(adminSystems.includes('Controlled private pilot</p><h3>Practice / Booking Admin Service'), 'systems page labels Practice / Booking Admin as a controlled private pilot');
 
 for (const system of SYSTEMS) {
   assert.ok(publicHome.includes(`app/${system}-admin/?demo=1`), `homepage links to ${system} sample route`);
@@ -168,8 +178,8 @@ for (const system of SYSTEMS) {
   assert.ok(E.systems[system].fields.length >= 10, `${system}: has enough editable fields`);
   assert.ok(E.systems[system].statuses.length >= 8, `${system}: has enough workflow statuses`);
   const records = E.sampleRecords(system);
-  const validations = records.map((r) => E.validate(system, r, records, FIXTURE_TODAY));
-  const failed = records.filter((_, i) => validations[i].status === 'Fail').map((r) => r[ID_KEY[system]]);
+  const validations = records.map((record) => E.validate(system, record, records, FIXTURE_TODAY));
+  const failed = records.filter((_, index) => validations[index].status === 'Fail').map((record) => record[ID_KEY[system]]);
   assert.equal(records.length, 10, `${system}: sample set should contain 10 records`);
   assert.equal(records.length - failed.length, 7, `${system}: should pass 7 records`);
   assert.equal(JSON.stringify(failed), JSON.stringify(expectedFails[system]), `${system}: failing records should match expected blockers`);
@@ -183,10 +193,10 @@ for (const system of SYSTEMS) {
   const productionRecords = buildProductionScaleDataset(E, system, 240);
   assert.equal(productionRecords.length, 240, `${system}: production-scale fixture has 240 records`);
   assertSanitizedDataset(productionRecords);
-  const ids = productionRecords.map((r) => r[ID_KEY[system]]);
+  const ids = productionRecords.map((record) => record[ID_KEY[system]]);
   assert.equal(new Set(ids).size, ids.length, `${system}: production-scale fixture IDs are unique`);
-  const productionValidations = productionRecords.map((r) => E.validate(system, r, productionRecords, FIXTURE_TODAY));
-  const productionFailed = productionRecords.filter((_, i) => productionValidations[i].status === 'Fail').map((r) => r[ID_KEY[system]]);
+  const productionValidations = productionRecords.map((record) => E.validate(system, record, productionRecords, FIXTURE_TODAY));
+  const productionFailed = productionRecords.filter((_, index) => productionValidations[index].status === 'Fail').map((record) => record[ID_KEY[system]]);
   assert.equal(JSON.stringify(productionFailed), JSON.stringify(expectedFailIds(system, 240)), `${system}: production-scale failing records are deterministic`);
   const productionReport = E.report(system, productionRecords, FIXTURE_TODAY);
   assert.equal(productionReport.total, 240, `${system}: production report total should be 240`);
@@ -197,4 +207,4 @@ for (const system of SYSTEMS) {
   assert.equal(productionRoundTrip[0][ID_KEY[system]], productionRecords[0][ID_KEY[system]], `${system}: production CSV round-trip preserves first ID`);
 }
 
-console.log('All Admin HQ and Phase 3 public-evidence audit regression tests passed.');
+console.log('All Admin HQ, Admin Audit and service-first TAD regression tests passed.');
