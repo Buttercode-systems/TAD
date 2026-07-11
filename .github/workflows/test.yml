@@ -12,10 +12,20 @@ permissions:
 jobs:
   regression:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: node tests/run-tests.mjs
+          node-version: 24
+      - name: Admin HQ and evidence regression
+        run: node tests/run-tests.mjs
+      - name: Admin Audit browser journey
+        run: node tests/browser-audit.mjs
+      - name: Upload browser proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-audit-v2-browser-proof
+          path: test-results/admin-audit-v2-mobile.png
+          if-no-files-found: ignore
