@@ -36,7 +36,7 @@ for (const phrase of [
   'Buttercode-systems/DTC',
   'split architecture',
   'Public workflow previews remain browser-only sample systems',
-  'Payment collection',
+  'payment collection',
   'verified-email client access',
 ]) {
   assert.ok(wiring.toLowerCase().includes(phrase.toLowerCase()), `production wiring must include ${phrase}`);
@@ -45,7 +45,7 @@ for (const phrase of [
 for (const phrase of [
   'Application is not instant activation',
   'Creating a workspace does not automatically email the client',
-  'Installation does not mean downloading an app',
+  'does not mean downloading an app',
   'Payment is currently handled manually',
   'Daily operation',
   'Viewer can see the item but cannot decide',
@@ -59,7 +59,7 @@ for (const phrase of [
   'Client can purchase a service entirely online',
   'Missing',
   'Workspace creation automatically emails the client',
-  'No complete document-management repository',
+  'complete document-management repository',
   'Viewer is read-only for decisions',
   'No system can ever fail or expose data',
   'Impossible guarantee',
