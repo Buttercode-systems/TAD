@@ -1,0 +1,19 @@
+:root {
+  --tad-ink: #111111;
+  --tad-paper: #F6F1E8;
+  --tad-card: #FFFDF8;
+  --tad-ledger: #D8FF57;
+  --tad-control: #8DC6FF;
+  --tad-decision: #C9A8FF;
+  --tad-signal: #FFB35C;
+  --tad-success: #5DAE65;
+  --tad-muted: #6F675D;
+  --tad-rule: #DED4C5;
+  --tad-font-display: "Space Grotesk", Arial, sans-serif;
+  --tad-font-body: Inter, Arial, sans-serif;
+  --tad-font-data: "IBM Plex Mono", "Courier New", monospace;
+  --tad-radius-sm: 8px;
+  --tad-radius-md: 14px;
+  --tad-radius-lg: 20px;
+  --tad-shadow: 0 16px 45px rgba(26, 20, 12, 0.09);
+}
