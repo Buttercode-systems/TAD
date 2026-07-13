@@ -13,7 +13,7 @@ permissions:
 jobs:
   role-integration:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - name: Check out TAD
         uses: actions/checkout@v4
@@ -35,9 +35,20 @@ jobs:
         with:
           version: latest
 
+      - name: Initialize isolated Supabase project
+        working-directory: dtc-engine
+        run: |
+          if [ ! -f supabase/config.toml ]; then
+            supabase init
+          fi
+
       - name: Start isolated Supabase stack and apply every migration
         working-directory: dtc-engine
-        run: supabase start
+        shell: bash
+        run: |
+          mkdir -p ../test-results
+          set -o pipefail
+          supabase start --debug 2>&1 | tee ../test-results/supabase-start.log
 
       - name: Install integration client
         run: npm install --no-save --ignore-scripts @supabase/supabase-js@2.110.1
@@ -51,7 +62,15 @@ jobs:
           set -a
           source /tmp/tad-supabase.env
           set +a
-          node tests/full-role-integration.mjs
+          node tests/full-role-integration.mjs 2>&1 | tee test-results/full-role-integration.log
+
+      - name: Upload role-integration evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tad-full-role-integration-${{ github.run_id }}
+          path: test-results/
+          if-no-files-found: warn
 
       - name: Stop isolated Supabase stack
         if: always()
