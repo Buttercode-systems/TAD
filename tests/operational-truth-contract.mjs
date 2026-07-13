@@ -44,7 +44,7 @@ for (const phrase of [
 
 for (const phrase of [
   'Application is not instant activation',
-  'Creating a workspace does not automatically email the client',
+  'automatically email the client',
   'does not mean downloading an app',
   'Payment is currently handled manually',
   'Daily operation',
