@@ -1,0 +1,83 @@
+name: Full TAD Operator and Client Integration
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  role-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out TAD
+        uses: actions/checkout@v4
+
+      - name: Check out the authenticated TAD engine
+        uses: actions/checkout@v4
+        with:
+          repository: Buttercode-systems/DTC
+          ref: main
+          path: dtc-engine
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Initialize isolated Supabase project
+        working-directory: dtc-engine
+        run: |
+          if [ ! -f supabase/config.toml ]; then
+            supabase init
+          fi
+          # The repository historically shipped two migrations with version 0024.
+          # Production already received both SQL changes; fresh replay needs a unique
+          # sortable version so Supabase can apply the same idempotent SQL exactly once.
+          mv supabase/migrations/0024_tad_application_pipeline.sql \
+             supabase/migrations/002401_tad_application_pipeline.sql
+
+      - name: Start isolated Supabase stack and apply every migration
+        working-directory: dtc-engine
+        shell: bash
+        run: |
+          mkdir -p ../test-results
+          set -o pipefail
+          supabase start --debug 2>&1 | tee ../test-results/supabase-start.log
+
+      - name: Install integration client
+        run: npm install --no-save --ignore-scripts @supabase/supabase-js@2.110.1
+
+      - name: Test every operator and client promise
+        shell: bash
+        run: |
+          cd dtc-engine
+          supabase status -o env > /tmp/tad-supabase.env
+          cd ..
+          set -a
+          source /tmp/tad-supabase.env
+          set +a
+          node tests/full-role-integration.mjs 2>&1 | tee test-results/full-role-integration.log
+
+      - name: Upload role-integration evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tad-full-role-integration-${{ github.run_id }}
+          path: test-results/
+          if-no-files-found: warn
+
+      - name: Stop isolated Supabase stack
+        if: always()
+        working-directory: dtc-engine
+        run: supabase stop --no-backup
