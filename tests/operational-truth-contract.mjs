@@ -43,7 +43,8 @@ for (const phrase of [
 }
 
 for (const phrase of [
-  'Application is not instant activation',
+  'A ready result does not mean automatic acceptance',
+  'no workspace is created',
   'automatically email the client',
   'does not mean downloading an app',
   'Payment is currently handled manually',
