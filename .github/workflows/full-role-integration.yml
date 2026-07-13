@@ -41,6 +41,11 @@ jobs:
           if [ ! -f supabase/config.toml ]; then
             supabase init
           fi
+          # The repository historically shipped two migrations with version 0024.
+          # Production already received both SQL changes; fresh replay needs a unique
+          # sortable version so Supabase can apply the same idempotent SQL exactly once.
+          mv supabase/migrations/0024_tad_application_pipeline.sql \
+             supabase/migrations/002401_tad_application_pipeline.sql
 
       - name: Start isolated Supabase stack and apply every migration
         working-directory: dtc-engine
